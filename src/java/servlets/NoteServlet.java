@@ -18,26 +18,24 @@ import models.Note;
  * @author Hussein
  */
 public class NoteServlet extends HttpServlet {
-    Note note;
+   
+    
  @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
     String mode = request.getParameter("mode");
-    if (mode != null && mode.equals("edit")) {
-        File file= new File(getServletContext().getRealPath("/WEB-INF/note.txt"));
-        Scanner in = new Scanner(file);
-        String title=in.nextLine();
-        String contents=in.nextLine();
-        note = new Note(title,contents);
+    if (mode == null || mode.equals("edit")) {
+        String path = getServletContext().getRealPath("/WEB-INF/note.txt");
+        BufferedReader br = new BufferedReader(new FileReader(new File(path)));
+        String title=br.readLine();
+        String contents=br.readLine();
+        Note note = new Note(title,contents);
         request.getSession().setAttribute("note", note);
-        getServletContext().getRequestDispatcher("/WEB-INF/editnote.jsp").forward(request, response);
-//        Note note = (Note) request.getSession().getAttribute("note");
-//        request.setAttribute("note", note);
-//        getServletContext().getRequestDispatcher("/WEB-INF/editnote.jsp").forward(request, response);
-    } else {
-        note = (Note) request.getSession().getAttribute("note");
-        request.setAttribute("note", note);
         getServletContext().getRequestDispatcher("/WEB-INF/viewnote.jsp").forward(request, response);
+    } else {
+        Note note = (Note) request.getSession().getAttribute("note");
+        request.setAttribute("note", note);
+        getServletContext().getRequestDispatcher("/WEB-INF/editnote.jsp").forward(request, response);
     }
 
     }
@@ -47,17 +45,18 @@ public class NoteServlet extends HttpServlet {
             throws ServletException, IOException {
         
             
-          String title = request.getParameter("title");
-          String contents = request.getParameter("contents");
-          note = (Note) request.getSession().getAttribute("note");
+          String title = request.getParameter("edittitle");
+          String contents = request.getParameter("editcontents");
+          Note note = (Note) request.getSession().getAttribute("note");
           note.setContents(contents);
           note.setTitle(title);
           request.getSession().setAttribute("note", note);
            
           try {
-            PrintWriter out = new PrintWriter(new File(getServletContext().getRealPath("/WEB-INF/note.txt")));
-            out.println(title);
-            out.println(contents);
+            String path = getServletContext().getRealPath("/WEB-INF/note.txt");
+            PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(path, false)));             
+            out.print(note.getTitle()+"\n");
+            out.print(note.getContents()+"\n");
             out.flush();
             out.close();
           } catch (FileNotFoundException e) {

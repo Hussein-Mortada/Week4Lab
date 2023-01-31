@@ -14,18 +14,15 @@
     <body>
          <h1>Simple Note Keeper</h1>
         <h2>Edit Note</h2>
-        <form action="viewnote" method="post">
-    <label for="title">Title:</label>
-    <input type="text"  name="title" value=${note.title}>
+        
+    <form action="note" method="post">
+    <label for="edittitle">Title:</label>
+    <input type="text"  name="edittitle" value=${note.title}>
     <br>
 
-    <label for="contents">Contents:</label>
-    <input type="text" name="contents" value=${note.contents}><br><br>
+    <label for="editcontents">Contents:</label>
+    <textarea name="editcontents" >${note.contents}</textarea><br><br>
     
-    test to see if attributes sent correctly
-    <p>${note.title}</p>
-    <p>${note.contents}</p>
-    <br>
     <input type="submit" name="operation" value="Save Changes">
     <input type="hidden" name="mode" value="view">
   </form>
